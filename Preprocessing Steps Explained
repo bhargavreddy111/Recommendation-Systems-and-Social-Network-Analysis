@@ -1,0 +1,41 @@
+The first step I perform is to read, preprocess, and format the data for further analysis. Python script called 
+PreprocessAmazonBooks.py that’s been created takes the “amazon-meta.txt” file as input, and based on that I performed the following steps:
+
+•	Parsed the amazon-meta.txt file
+
+•	Preprocessed the metadata for all ASINs, and writes out the following fields into the amazonProducts Nested Dictionary (key = ASIN 
+and value = MetaData Dictionary associated with ASIN):
+o	Id: same as “Id” in amazon-meta.txt
+o	ASIN: same as “ASIN” in amazon -meta.txt
+o	Title: same as “title” in amazon-meta.txt
+o	Group: product group that the product belongs to
+o	Categories: a transformed version of “categories” in amazon-meta.txt. Essentially, all categories associated with the ASIN are 
+concatenated, and are then subject to the following Text Preprocessing steps: lowercase, remove digit/punctuation, remove stop words, 
+retain only unique words. The resulting list of words is then placed into “Categories”.
+o	Copurchased: a transformed version of “similar” in amazon-meta.txt. Essentially, the copurchased ASINs in the “similar” field are 
+filtered down to only those ASINs that have metadata associated with it. The resulting list of ASINs is then placed into “Copurchased”.
+o	SalesRank: same as “salesrank” in amazon-meta.txt
+o	TotalReviews: same as total number of reviews under “reviews” in amazon-meta.txt
+o	AvgRating: same as average rating under “reviews” in amazon-meta.txt
+
+•	Filtered amazonProducts Dictionary down to only Group=Book, and wrote filtered data to amazonBooksND Dictionary
+
+•	Used the co-purchase data in amazonBooksND Dictionary to create the copurchaseGraph structure as below:
+o	Nodes: the ASINs are Nodes in the Graph
+o	Edges: an Edge exists between two Nodes (ASINs) if the two ASINs were co-purchased
+o	Edge Weight (based on Category Similarity): since I am attempting to make book recommendations based on co-purchase information, 
+I wanted it to have some measure of Similarity for each ASIN (Node) pair that was co-purchased (existence of Edge between the Nodes). 
+I then used the Similarity measure as the Edge Weight between the Node pair that was co-purchased. I could create 
+such a Similarity measure by using the “Categories” data, where the Similarity measure between any two ASINs that were co-purchased 
+is calculated as follows:
+Similarity = (Number of words that are common between Categories of connected Nodes)/
+		(Total Number of words in both Categories of connected Nodes)
+The Similarity ranges from 0 (most dissimilar) to 1 (most similar).
+
+•	Added the following graph-related measures for each ASIN to the amazonBooksND Dictionary:
+o	DegreeCentrality: associated with each Node (ASIN)
+o	ClusteringCoeff: associated with each Node (ASIN)
+
+•	Converted the amazonBooksND dictionary into the amazonBooks pandas dataframe, dropped the “Copurchased” and “Group” columns, and then I had written the amazonBooks dataframe to the amazon-books.csv file
+
+•	Then I had written the copurchaseGraph graph to the amazon-books-copurchase.edgelist file
