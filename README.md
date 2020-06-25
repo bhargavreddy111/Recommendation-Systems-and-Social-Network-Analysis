@@ -1,6 +1,6 @@
 # Recommendation Systems and Social Network Analysis
-Print Top 5 recommendations for books on Amazon using a composite score implementing network analysis concepts
-Problem Definition
+Objective is to get Top 5 recommendations for books on Amazon using a composite score implementing network analysis concepts
+
 
 In this Project, I used Amazon Product Co-purchase data to make Book Recommendations using Network Analysis. This project covered 3 main aspects:
 
